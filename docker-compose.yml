@@ -22,11 +22,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
       DATABASE_URL: postgresql://tracker_user:tracker_password@postgres:5432/job_tracker
       AUTH_SECRET: supersecretauthkey12345
-      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://localhost:3002
     depends_on:
       postgres:
         condition: service_healthy
