@@ -62,6 +62,8 @@ model JobApplication {
   priority       Priority  @default(MEDIUM)
   salaryMin      Int?
   salaryMax      Int?
+  expectedSalary Int?
+  realSalary     Int?
   currency       String    @default("IDR")
   platform       String?
   requirements   String[]
