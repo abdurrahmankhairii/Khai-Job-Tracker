@@ -93,9 +93,9 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
         const max = row.original.salaryMax;
         if (!min) return <span className="text-slate-400">-</span>;
         return (
-          <span className="text-sm font-medium text-slate-600">
+          <span className="text-sm font-medium text-slate-600 whitespace-nowrap">
             {new Intl.NumberFormat('id-ID', { style: 'currency', currency: row.original.currency, maximumFractionDigits: 0 }).format(min)}
-            {max ? ` - ${new Intl.NumberFormat('id-ID', { notation: "compact", maximumFractionDigits: 1 }).format(max)}` : ''}
+            {max ? ` - ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: row.original.currency, maximumFractionDigits: 0 }).format(max)}` : ''}
           </span>
         );
       }
@@ -130,12 +130,12 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
           )}
           {row.original.resumeUsed ? (
             <a 
-              href={row.original.resumeUsed} 
+              href={row.original.resumeUsed.startsWith('http') ? row.original.resumeUsed : (row.original.resumeUsed.startsWith('file://') ? row.original.resumeUsed : `file:///${row.original.resumeUsed.replace(/\\/g, '/')}`)}
               target="_blank" 
               rel="noopener noreferrer" 
               onClick={(e) => e.stopPropagation()}
               className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-colors"
-              title="CV/Resume Link"
+              title={`CV: ${row.original.resumeUsed}`}
             >
               <FileText className="w-4 h-4" />
             </a>

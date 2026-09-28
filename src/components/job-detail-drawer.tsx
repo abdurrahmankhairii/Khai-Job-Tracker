@@ -91,7 +91,7 @@ export function JobDetailDrawer({ job, isOpen, onClose, onEdit }: DrawerProps) {
             <div className="bg-white/50 p-4 rounded-2xl shadow-sm border border-white/60">
               <span className="text-xs font-semibold text-slate-400 block mb-2 uppercase tracking-wider">Salary</span>
               <div className="text-sm font-semibold text-slate-700">
-                {job.salaryMin ? `${new Intl.NumberFormat("id-ID", { notation: "compact" }).format(job.salaryMin)} - ${new Intl.NumberFormat("id-ID", { notation: "compact" }).format(job.salaryMax || job.salaryMin)}` : "-"}
+                {job.salaryMin ? `${new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.salaryMin)}${job.salaryMax ? ` - ${new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.salaryMax)}` : ''}` : "-"}
               </div>
             </div>
           </div>
@@ -110,13 +110,14 @@ export function JobDetailDrawer({ job, isOpen, onClose, onEdit }: DrawerProps) {
 
           {job.resumeUsed && (
             <a 
-              href={job.resumeUsed} 
+              href={job.resumeUsed.startsWith('http') ? job.resumeUsed : (job.resumeUsed.startsWith('file://') ? job.resumeUsed : `file:///${job.resumeUsed.replace(/\\/g, '/')}`)}
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 text-emerald-600 hover:text-white bg-emerald-50 hover:bg-emerald-600 p-3 rounded-xl text-sm font-semibold transition-all shadow-sm mt-3"
+              title={job.resumeUsed}
             >
               <FileText className="w-4 h-4" />
-              View Submitted CV/Resume
+              View CV/Resume (Local Folder)
             </a>
           )}
 
