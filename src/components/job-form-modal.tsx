@@ -30,7 +30,8 @@ export function JobFormModal({ isOpen, onClose, jobToEdit }: JobFormModalProps) 
     salaryMax: "",
     jobUrl: "",
     resumeUsed: "",
-    notes: ""
+    notes: "",
+    appliedDate: new Date().toISOString().split('T')[0]
   });
 
   useEffect(() => {
@@ -47,7 +48,8 @@ export function JobFormModal({ isOpen, onClose, jobToEdit }: JobFormModalProps) 
         salaryMax: jobToEdit.salaryMax?.toString() || "",
         jobUrl: jobToEdit.jobUrl || "",
         resumeUsed: jobToEdit.resumeUsed || "",
-        notes: jobToEdit.notes || ""
+        notes: jobToEdit.notes || "",
+        appliedDate: jobToEdit.appliedDate ? new Date(jobToEdit.appliedDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
       });
     } else {
       setFormData({
@@ -62,7 +64,8 @@ export function JobFormModal({ isOpen, onClose, jobToEdit }: JobFormModalProps) 
         salaryMax: "",
         jobUrl: "",
         resumeUsed: "",
-        notes: ""
+        notes: "",
+        appliedDate: new Date().toISOString().split('T')[0]
       });
     }
   }, [jobToEdit, isOpen]);
@@ -76,6 +79,7 @@ export function JobFormModal({ isOpen, onClose, jobToEdit }: JobFormModalProps) 
         ...formData,
         salaryMin: formData.salaryMin ? parseInt(formData.salaryMin) : null,
         salaryMax: formData.salaryMax ? parseInt(formData.salaryMax) : null,
+        appliedDate: new Date(formData.appliedDate)
       };
 
       if (jobToEdit) {
@@ -179,13 +183,18 @@ export function JobFormModal({ isOpen, onClose, jobToEdit }: JobFormModalProps) 
               </div>
 
               <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Applied Date *</label>
+                <input required type="date" className="w-full glass-input px-4 py-2" value={formData.appliedDate} onChange={e => setFormData({...formData, appliedDate: e.target.value})} />
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">Link Apply (Job URL)</label>
                 <input type="url" className="w-full glass-input px-4 py-2" value={formData.jobUrl} onChange={e => setFormData({...formData, jobUrl: e.target.value})} />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Link CV</label>
-                <input type="url" className="w-full glass-input px-4 py-2" value={formData.resumeUsed} onChange={e => setFormData({...formData, resumeUsed: e.target.value})} />
+                <label className="text-sm font-medium text-slate-700">Link CV (Path or URL)</label>
+                <input type="text" className="w-full glass-input px-4 py-2" value={formData.resumeUsed} onChange={e => setFormData({...formData, resumeUsed: e.target.value})} />
               </div>
 
               <div className="space-y-2">
