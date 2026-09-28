@@ -88,10 +88,27 @@ export function JobDetailDrawer({ job, isOpen, onClose, onEdit }: DrawerProps) {
                 {job.location || job.workMode}
               </div>
             </div>
-            <div className="bg-white/50 p-4 rounded-2xl shadow-sm border border-white/60">
-              <span className="text-xs font-semibold text-slate-400 block mb-2 uppercase tracking-wider">Salary</span>
-              <div className="text-sm font-semibold text-slate-700">
-                {job.salaryMin ? `${new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.salaryMin)}${job.salaryMax ? ` - ${new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.salaryMax)}` : ''}` : "-"}
+            <div className="bg-white/50 p-4 rounded-2xl shadow-sm border border-white/60 col-span-2">
+              <span className="text-xs font-semibold text-slate-400 block mb-3 uppercase tracking-wider">Salaries</span>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Market Range</span>
+                  <div className="text-sm font-semibold text-slate-700">
+                    {job.salaryMin || job.salaryMax ? `${job.salaryMin ? new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.salaryMin) : ''}${job.salaryMin && job.salaryMax ? ' - ' : ''}${job.salaryMax ? new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.salaryMax) : ''}` : "-"}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Expected</span>
+                  <div className="text-sm font-semibold text-blue-600">
+                    {job.expectedSalary ? new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.expectedSalary) : "-"}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Real / Offered</span>
+                  <div className="text-sm font-semibold text-emerald-600">
+                    {job.realSalary ? new Intl.NumberFormat("id-ID", { style: 'currency', currency: job.currency, maximumFractionDigits: 0 }).format(job.realSalary) : "-"}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
