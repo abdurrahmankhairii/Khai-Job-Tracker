@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { JobApplication } from "@prisma/client";
 import { format } from "date-fns";
-import { Search, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, ExternalLink, FileText } from "lucide-react";
 import { Badge } from "./ui/badge";
 
 type JobTableProps = {
@@ -108,6 +108,42 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
           {format(new Date(row.original.appliedDate), "MMM d, yyyy")}
         </span>
       )
+    },
+    {
+      id: "links",
+      header: "Links",
+      cell: ({ row }: any) => (
+        <div className="flex gap-2 items-center">
+          {row.original.jobUrl ? (
+            <a 
+              href={row.original.jobUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onClick={(e) => e.stopPropagation()}
+              className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors tooltip-trigger"
+              title="Job Posting Link"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          ) : (
+            <span className="p-1.5 text-slate-300"><ExternalLink className="w-4 h-4" /></span>
+          )}
+          {row.original.resumeUsed ? (
+            <a 
+              href={row.original.resumeUsed} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onClick={(e) => e.stopPropagation()}
+              className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-colors"
+              title="CV/Resume Link"
+            >
+              <FileText className="w-4 h-4" />
+            </a>
+          ) : (
+            <span className="p-1.5 text-slate-300"><FileText className="w-4 h-4" /></span>
+          )}
+        </div>
+      )
     }
   ];
 
@@ -127,29 +163,29 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center relative">
-        <Search className="w-4 h-4 absolute left-3 text-slate-400" />
+      <div className="flex items-center relative mb-6">
+        <Search className="w-5 h-5 absolute left-4 text-blue-500/60" />
         <input
           placeholder="Filter companies..."
           value={(table.getColumn("company")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("company")?.setFilterValue(event.target.value)
           }
-          className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-sky-500 bg-white/50 w-full max-w-sm transition-all"
+          className="pl-11 pr-4 py-2.5 bg-white/40 backdrop-blur-md border border-white/60 shadow-sm focus:bg-white/70 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 transition-all rounded-xl text-sm outline-none w-full max-w-sm text-slate-700"
         />
       </div>
-      <div className="rounded-xl border border-slate-100 overflow-hidden bg-white/40">
+      <div className="rounded-2xl border border-white/60 overflow-hidden bg-white/30 backdrop-blur-md shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-slate-100 bg-slate-50/50">
+              <tr key={headerGroup.id} className="border-b border-white/40 bg-blue-50/30">
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-6 py-4 text-sm font-medium text-slate-500">
+                  <th key={header.id} className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">
                     {header.isPlaceholder ? null : (
                       <div
                         className={
                           header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-1 hover:text-slate-800 transition-colors"
+                            ? "cursor-pointer select-none flex items-center gap-1 hover:text-blue-600 transition-colors"
                             : ""
                         }
                         onClick={header.column.getToggleSortingHandler()}
@@ -159,8 +195,8 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
                           header.getContext()
                         )}
                         {{
-                          asc: <ChevronUp className="w-4 h-4" />,
-                          desc: <ChevronDown className="w-4 h-4" />,
+                          asc: <ChevronUp className="w-4 h-4 text-blue-500" />,
+                          desc: <ChevronDown className="w-4 h-4 text-blue-500" />,
                         }[header.column.getIsSorted() as string] ?? null}
                       </div>
                     )}
@@ -175,10 +211,10 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
                 <tr
                   key={row.id}
                   onClick={() => onRowClick(row.original.id)}
-                  className="border-b border-slate-50 last:border-0 hover:bg-sky-50/50 transition-colors cursor-pointer"
+                  className="border-b border-white/30 last:border-0 hover:bg-white/60 transition-all cursor-pointer group"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-6 py-4">
+                    <td key={cell.id} className="px-5 py-3 text-sm">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -186,8 +222,11 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="h-24 text-center text-slate-500">
-                  No results.
+                <td colSpan={columns.length} className="h-32 text-center">
+                  <div className="flex flex-col items-center justify-center text-slate-400">
+                    <Search className="w-8 h-8 mb-2 opacity-20" />
+                    <p>No applications found.</p>
+                  </div>
                 </td>
               </tr>
             )}
