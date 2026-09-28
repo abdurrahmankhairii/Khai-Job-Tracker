@@ -87,16 +87,45 @@ export function JobTable({ jobs, onRowClick, onStatusChange }: JobTableProps) {
     },
     {
       accessorKey: "salaryMin",
-      header: "Salary",
+      header: "Salaries",
       cell: ({ row }: any) => {
         const min = row.original.salaryMin;
         const max = row.original.salaryMax;
-        if (!min) return <span className="text-slate-400">-</span>;
+        const expected = row.original.expectedSalary;
+        const real = row.original.realSalary;
+        const currency = row.original.currency;
+        
+        const formatMoney = (val: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency, maximumFractionDigits: 0 }).format(val);
+
+        if (!min && !expected && !real) return <span className="text-slate-400">-</span>;
+
         return (
-          <span className="text-sm font-medium text-slate-600 whitespace-nowrap">
-            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: row.original.currency, maximumFractionDigits: 0 }).format(min)}
-            {max ? ` - ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: row.original.currency, maximumFractionDigits: 0 }).format(max)}` : ''}
-          </span>
+          <div className="flex flex-col gap-1.5 text-xs min-w-[180px]">
+            {(min || max) && (
+               <div className="flex justify-between items-center gap-3">
+                 <span className="text-slate-400">Market</span>
+                 <span className="font-medium text-slate-600 whitespace-nowrap">
+                   {min ? formatMoney(min) : ''} {min && max ? ' - ' : ''} {max ? formatMoney(max) : ''}
+                 </span>
+               </div>
+            )}
+            {expected && (
+               <div className="flex justify-between items-center gap-3">
+                 <span className="text-slate-400">Expected</span>
+                 <span className="font-medium text-blue-600 whitespace-nowrap">
+                   {formatMoney(expected)}
+                 </span>
+               </div>
+            )}
+            {real && (
+               <div className="flex justify-between items-center gap-3">
+                 <span className="text-slate-400">Offered</span>
+                 <span className="font-medium text-emerald-600 whitespace-nowrap">
+                   {formatMoney(real)}
+                 </span>
+               </div>
+            )}
+          </div>
         );
       }
     },
