@@ -1,9 +1,9 @@
 
 "use client";
 
-import { JobApplication } from "@prisma/client";
+import { JobApplication, JobStatusHistory } from "@prisma/client";
 import { format } from "date-fns";
-import { X, ExternalLink, MapPin, Building2, Calendar, FileText, Trash2, Edit } from "lucide-react";
+import { X, ExternalLink, MapPin, Building2, Calendar, FileText, Trash2, Edit, Activity } from "lucide-react";
 import { deleteJob } from "@/actions/job-actions";
 import { useState } from "react";
 import { Badge } from "./ui/badge";
@@ -11,7 +11,7 @@ import { DeleteDialog } from "./delete-dialog";
 import { useToast } from "@/hooks/use-toast";
 
 type DrawerProps = {
-  job: JobApplication | null;
+  job: (JobApplication & { statusHistory?: JobStatusHistory[] }) | null;
   isOpen: boolean;
   onClose: () => void;
   onEdit: () => void;
@@ -144,6 +144,29 @@ export function JobDetailDrawer({ job, isOpen, onClose, onEdit }: DrawerProps) {
             </h3>
             <div className="bg-white/50 p-4 rounded-2xl text-sm text-slate-700 leading-relaxed min-h-[120px] whitespace-pre-wrap shadow-sm border border-white/60">
               {job.notes || <span className="text-slate-400 italic">No notes added yet.</span>}
+            </div>
+          </div>
+
+          <div className="space-y-3 pb-8">
+            <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-blue-500" /> Status History
+            </h3>
+            <div className="bg-white/50 p-5 rounded-2xl shadow-sm border border-white/60">
+              {job.statusHistory && job.statusHistory.length > 0 ? (
+                <div className="relative border-l-2 border-blue-200 ml-2 space-y-5">
+                  {job.statusHistory.map((history) => (
+                    <div key={history.id} className="relative pl-6">
+                      <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm" />
+                      <div className="text-[11px] font-bold text-slate-400 mb-1 tracking-wide uppercase">
+                        {format(new Date(history.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                      </div>
+                      <Badge className="bg-blue-100 text-blue-700 font-bold border border-blue-200/50 shadow-sm">{history.status.replace("_", " ")}</Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-slate-400 italic text-sm">No history recorded yet.</span>
+              )}
             </div>
           </div>
         </div>
