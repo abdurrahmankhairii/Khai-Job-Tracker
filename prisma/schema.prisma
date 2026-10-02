@@ -74,6 +74,17 @@ model JobApplication {
   appliedDate    DateTime  @default(now())
   followUpDate   DateTime?
   updatedAt      DateTime  @updatedAt
+  statusHistory  JobStatusHistory[]
 
   @@index([userId])
+}
+
+model JobStatusHistory {
+  id               String         @id @default(cuid())
+  jobApplicationId String
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+  status           JobStatus
+  createdAt        DateTime       @default(now())
+
+  @@index([jobApplicationId])
 }
