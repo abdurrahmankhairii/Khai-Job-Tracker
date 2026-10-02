@@ -10,6 +10,7 @@ export async function getJobs() {
 
   return await prisma.jobApplication.findMany({
     where: { userId: session.user.id },
+    include: { statusHistory: { orderBy: { createdAt: 'desc' } } },
     orderBy: { updatedAt: 'desc' }
   });
 }
@@ -21,7 +22,12 @@ export async function createJob(data: any) {
   await prisma.jobApplication.create({
     data: {
       ...data,
-      userId: session.user.id
+      userId: session.user.id,
+      statusHistory: {
+        create: {
+          status: data.status || 'WISHLIST'
+        }
+      }
     }
   });
   revalidatePath("/dashboard");
@@ -35,9 +41,18 @@ export async function updateJob(id: string, data: any) {
   const job = await prisma.jobApplication.findUnique({ where: { id } });
   if (job?.userId !== session.user.id) throw new Error("Unauthorized");
 
+  const updateData: any = { ...data };
+  if (data.status && data.status !== job.status) {
+    updateData.statusHistory = {
+      create: {
+        status: data.status
+      }
+    };
+  }
+
   await prisma.jobApplication.update({
     where: { id },
-    data
+    data: updateData
   });
   revalidatePath("/dashboard");
 }
